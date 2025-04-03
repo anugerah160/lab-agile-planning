@@ -1,4 +1,4 @@
-# github-final-project
+# Lab Agile Planning
 
 # Hi there 👋, I'm Anugerah
 
