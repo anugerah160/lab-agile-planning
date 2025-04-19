@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeItem, updateQuantity } from './CartSlice';
+import { useState } from 'react';
 import './CartItem.css';
 
 const CartItem = ({ onContinueShopping }) => {
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const cart = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
   const totalItems = useSelector(state =>
@@ -38,6 +40,14 @@ const CartItem = ({ onContinueShopping }) => {
 
   const handleRemove = (item) => {
     dispatch(removeItem(item.id));
+  };
+
+  const handleCheckout = () => {
+    setShowComingSoon(true);
+  };
+  
+  const closeModal = () => {
+    setShowComingSoon(false);
   };
 
   // Calculate total cost based on quantity for an item
@@ -75,9 +85,19 @@ const CartItem = ({ onContinueShopping }) => {
       <div className="continue_shopping_btn">
         <button className="get-started-button" onClick={(e) => handleContinueShopping(e)}>Continue Shopping</button>
         <br />
-        <button className="get-started-button1">Checkout</button>
+        <button className="get-started-button1" onClick={handleCheckout}>Checkout</button>
       </div>
+      {showComingSoon && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>🚧 Checkout Coming Soon!</h2>
+            <p>We’re working hard to bring you this feature. Stay tuned!</p>
+            <button className="close-button" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
+    
   );
 };
 
