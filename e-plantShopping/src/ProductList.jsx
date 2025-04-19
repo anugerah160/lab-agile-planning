@@ -2,11 +2,23 @@ import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
 import { addItem } from './CartSlice';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
-    const [addedToCart, SetAddedToCart] = useState({});
+    const [addedToCart, setAddedToCart] = useState({});
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart.items);
+
+    useEffect(() => {
+        const updatedAddedToCart = {};
+        cartItems.forEach(item => {
+          updatedAddedToCart[item.name] = true;
+        });
+        setAddedToCart(updatedAddedToCart);
+      }, [cartItems]);
 
     const plantsArray = [
         {
@@ -255,6 +267,9 @@ function ProductList({ onHomeClick }) {
         e.preventDefault();
         setShowCart(false);
     };
+    const handleRemoveFromCart = (productId) => {
+        dispatch(removeItem(productId));
+    };
 
     const handleAddToCart = (product) => {
         dispatch(addItem(product));
@@ -296,7 +311,8 @@ function ProductList({ onHomeClick }) {
                                 <div className="">{plant.description}</div>
                                 <div className="product-price">{plant.cost}</div>
                                 {/*Similarly like the above plant.name show other details like description and cost*/}
-                                <button  className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                                <button  className="product-button" onClick={() => handleAddToCart(plant)}
+                                    disabled={addedToCart[plant.name]}>{addedToCart[plant.name] ? "Added" : "Add to Cart"}</button>
                             </div>
                             ))}
                         </div>
@@ -304,7 +320,8 @@ function ProductList({ onHomeClick }) {
                     ))}
                 </div>
             ) : (
-                <CartItem onContinueShopping={handleContinueShopping} />
+                <CartItem 
+                    onContinueShopping={() => setShowCart(false)} onRemoveFromCart={handleRemoveFromCart} />
             )}
         </div>
     );
